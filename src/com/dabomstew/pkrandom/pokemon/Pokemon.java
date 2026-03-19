@@ -302,6 +302,11 @@ public class Pokemon implements Comparable<Pokemon> {
             Species.xurkitree, Species.celesteela, Species.kartana, Species.guzzlord, Species.poipole, Species.naganadel,
             Species.stakataka, Species.blacephalon);
 
+    private static final List<Integer> mythicals = Arrays.asList(Species.mew, Species.celebi, Species.jirachi, Species.deoxys,
+            Species.phione, Species.manaphy, Species.darkrai, Species.shaymin, Species.arceus, Species.victini, Species.keldeo,
+            Species.meloetta, Species.genesect, Species.diancie, Species.hoopa, Species.volcanion, Species.magearna,
+            Species.marshadow, Species.zeraora);
+
     public boolean isLegendary() {
         return formeNumber == 0 ? legendaries.contains(this.number) : legendaries.contains(this.baseForme.number);
     }
@@ -317,6 +322,11 @@ public class Pokemon implements Comparable<Pokemon> {
     public boolean isUltraBeast() {
         return ultraBeasts.contains(this.number);
     }
+
+    public boolean isMythical() {
+        return formeNumber == 0 ? mythicals.contains(this.number) : mythicals.contains(this.baseForme.number);
+    }
+
 
     public int getCosmeticFormNumber(int num) {
         return realCosmeticFormNumbers.isEmpty() ? num : realCosmeticFormNumbers.get(num);

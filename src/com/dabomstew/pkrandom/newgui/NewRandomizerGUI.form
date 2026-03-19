@@ -791,7 +791,7 @@
                   </hspacer>
                   <vspacer id="499d4">
                     <constraints>
-                      <grid row="5" column="1" row-span="1" col-span="2" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                      <grid row="6" column="1" row-span="1" col-span="2" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="0.0" weighty="0.0"/>
                     </constraints>
                   </vspacer>
@@ -838,6 +838,27 @@
                       <enabled value="false"/>
                       <text resource-bundle="com/dabomstew/pkrandom/newgui/Bundle" key="GUI.spRandomTwoEvosRadioButton.text"/>
                       <toolTipText resource-bundle="com/dabomstew/pkrandom/newgui/Bundle" key="GUI.spRandomTwoEvosRadioButton.toolTipText"/>
+                    </properties>
+                  </component>
+                  <component id="rndcat1" class="javax.swing.JRadioButton" binding="spRandomCategoryRadioButton">
+                    <constraints>
+                      <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="0.0" weighty="0.0"/>
+                    </constraints>
+                    <properties>
+                      <enabled value="false"/>
+                      <text resource-bundle="com/dabomstew/pkrandom/newgui/Bundle" key="GUI.spRandomCategoryRadioButton.text"/>
+                      <toolTipText resource-bundle="com/dabomstew/pkrandom/newgui/Bundle" key="GUI.spRandomCategoryRadioButton.toolTipText"/>
+                    </properties>
+                  </component>
+                  <component id="rndcat2" class="javax.swing.JComboBox" binding="spRestrictedComboBox">
+                    <constraints>
+                      <grid row="5" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="2" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="0.0" weighty="0.0"/>
+                    </constraints>
+                    <properties>
+                      <enabled value="false"/>
+                      <toolTipText resource-bundle="com/dabomstew/pkrandom/newgui/Bundle" key="GUI.spRandomCategoryRadioButton.toolTipText"/>
                     </properties>
                   </component>
                   <component id="83a64" class="javax.swing.JComboBox" binding="spComboBox1">
@@ -3836,6 +3857,7 @@
       <member id="94a4e"/>
       <member id="c1c80"/>
       <member id="12184"/>
+      <member id="rndcat1"/>
     </group>
     <group name="staticPokemonButtonGroup">
       <member id="a28a1"/>

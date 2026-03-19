@@ -94,6 +94,8 @@ public class NewRandomizerGUI {
     private JRadioButton spCustomRadioButton;
     private JRadioButton spRandomCompletelyRadioButton;
     private JRadioButton spRandomTwoEvosRadioButton;
+    private JRadioButton spRandomCategoryRadioButton;
+    private JComboBox<String> spRestrictedComboBox;
     private JComboBox<String> spComboBox1;
     private JComboBox<String> spComboBox2;
     private JComboBox<String> spComboBox3;
@@ -427,6 +429,8 @@ public class NewRandomizerGUI {
         spCustomRadioButton.addActionListener(e -> enableOrDisableSubControls());
         spRandomCompletelyRadioButton.addActionListener(e -> enableOrDisableSubControls());
         spRandomTwoEvosRadioButton.addActionListener(e -> enableOrDisableSubControls());
+        spRandomCategoryRadioButton.addActionListener(e -> enableOrDisableSubControls());
+        spCustomRadioButton.addActionListener(e -> enableOrDisableSubControls());
         stpUnchangedRadioButton.addActionListener(e -> enableOrDisableSubControls());
         stpSwapLegendariesSwapStandardsRadioButton.addActionListener(e -> enableOrDisableSubControls());
         stpRandomCompletelyRadioButton.addActionListener(e -> enableOrDisableSubControls());
@@ -637,7 +641,7 @@ public class NewRandomizerGUI {
 
     private void initExplicit() {
 
-        versionLabel.setText(String.format(bundle.getString("GUI.versionLabel.text"), Version.VERSION_STRING));
+        versionLabel.setText("Version X");
         mtNoExistLabel.setVisible(false);
         mtNoneAvailableLabel.setVisible(false);
         baseTweaksPanel.add(liveTweaksPanel);
@@ -1502,6 +1506,10 @@ public class NewRandomizerGUI {
         spRandomCompletelyRadioButton.setSelected(settings.getStartersMod() == Settings.StartersMod.COMPLETELY_RANDOM);
         spUnchangedRadioButton.setSelected(settings.getStartersMod() == Settings.StartersMod.UNCHANGED);
         spRandomTwoEvosRadioButton.setSelected(settings.getStartersMod() == Settings.StartersMod.RANDOM_WITH_TWO_EVOLUTIONS);
+        spRandomCategoryRadioButton.setSelected(settings.getStartersMod() == Settings.StartersMod.RANDOM_CATEGORY);
+        if (settings.getStartersCategory() != null) {
+            spRestrictedComboBox.setSelectedIndex(settings.getStartersCategory().ordinal());
+        }
         spRandomizeStarterHeldItemsCheckBox.setSelected(settings.isRandomizeStartersHeldItems());
         spBanBadItemsCheckBox.setSelected(settings.isBanBadRandomStarterHeldItems());
         spAllowAltFormesCheckBox.setSelected(settings.isAllowStarterAltFormes());
@@ -1743,7 +1751,8 @@ public class NewRandomizerGUI {
         settings.setRemoveTimeBasedEvolutions(peRemoveTimeBasedEvolutionsCheckBox.isSelected());
 
         settings.setStartersMod(spUnchangedRadioButton.isSelected(), spCustomRadioButton.isSelected(), spRandomCompletelyRadioButton.isSelected(),
-                spRandomTwoEvosRadioButton.isSelected());
+                spRandomTwoEvosRadioButton.isSelected(), spRandomCategoryRadioButton.isSelected());
+        settings.setStartersCategory(Settings.StartersCategory.values()[spRestrictedComboBox.getSelectedIndex()]);
         settings.setRandomizeStartersHeldItems(spRandomizeStarterHeldItemsCheckBox.isSelected() && spRandomizeStarterHeldItemsCheckBox.isVisible());
         settings.setBanBadRandomStarterHeldItems(spBanBadItemsCheckBox.isSelected() && spBanBadItemsCheckBox.isVisible());
         settings.setAllowStarterAltFormes(spAllowAltFormesCheckBox.isSelected() && spAllowAltFormesCheckBox.isVisible());
@@ -2158,6 +2167,15 @@ public class NewRandomizerGUI {
         spRandomTwoEvosRadioButton.setVisible(true);
         spRandomTwoEvosRadioButton.setEnabled(false);
         spRandomTwoEvosRadioButton.setSelected(false);
+        spRandomCategoryRadioButton.setVisible(true);
+        spRandomCategoryRadioButton.setEnabled(false);
+        spRandomCategoryRadioButton.setSelected(false);
+        spRestrictedComboBox.setVisible(true);
+        spRestrictedComboBox.setEnabled(false);
+        spRestrictedComboBox.setModel(new DefaultComboBoxModel<>(new String[] {
+                "Legendary", "Mythical", "Ultra Beast", "Mega Evolutions"
+        }));
+        spRestrictedComboBox.setSelectedIndex(0);
         spComboBox1.setVisible(true);
         spComboBox1.setEnabled(false);
         spComboBox1.setSelectedIndex(0);
@@ -2756,6 +2774,7 @@ public class NewRandomizerGUI {
             spCustomRadioButton.setEnabled(true);
             spRandomCompletelyRadioButton.setEnabled(true);
             spRandomTwoEvosRadioButton.setEnabled(true);
+            spRandomCategoryRadioButton.setEnabled(true);
             spAllowAltFormesCheckBox.setVisible(romHandler.hasStarterAltFormes());
             if (romHandler.isYellow()) {
                 spComboBox3.setVisible(false);
@@ -3219,6 +3238,7 @@ public class NewRandomizerGUI {
 
         boolean spCustomStatus = spCustomRadioButton.isSelected();
         spComboBox1.setEnabled(spCustomStatus);
+        spRestrictedComboBox.setEnabled(spRandomCategoryRadioButton.isSelected());
         spComboBox2.setEnabled(spCustomStatus);
         spComboBox3.setEnabled(spCustomStatus);
 

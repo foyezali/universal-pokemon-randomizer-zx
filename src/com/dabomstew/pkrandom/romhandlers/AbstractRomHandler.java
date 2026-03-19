@@ -4050,6 +4050,74 @@ public abstract class AbstractRomHandler implements RomHandler {
     }
 
     @Override
+    public void randomizeStartersByCategory(Settings settings) {
+        boolean abilitiesUnchanged = settings.getAbilitiesMod() == Settings.AbilitiesMod.UNCHANGED;
+        boolean allowAltFormes = settings.isAllowStarterAltFormes();
+        boolean banIrregularAltFormes = settings.isBanIrregularAltFormes();
+        Settings.StartersCategory category = settings.getStartersCategory();
+
+        int starterCount = starterCount();
+        pickedStarters = new ArrayList<>();
+        List<Pokemon> banned = getBannedFormesForPlayerPokemon();
+        if (abilitiesUnchanged) {
+            List<Pokemon> abilityDependentFormes = getAbilityDependentFormes();
+            banned.addAll(abilityDependentFormes);
+        }
+        if (banIrregularAltFormes) {
+            banned.addAll(getIrregularFormes());
+        }
+
+        List<Pokemon> categoryPool = new ArrayList<>();
+        List<Pokemon> sourceList = allowAltFormes ? getPokemonInclFormes() : getPokemon();
+        for (Pokemon p : sourceList) {
+            if (p == null || p.actuallyCosmetic || banned.contains(p)) continue;
+            
+            boolean matches = false;
+            if (category == Settings.StartersCategory.LEGENDARY) {
+                matches = p.isLegendary();
+            } else if (category == Settings.StartersCategory.MYTHICAL) {
+                matches = p.isMythical();
+            } else if (category == Settings.StartersCategory.ULTRA_BEAST) {
+                matches = p.isUltraBeast();
+            } else if (category == Settings.StartersCategory.MEGA_EVOLVERS) {
+                if (hasMegaEvolutions()) {
+                    List<MegaEvolution> megas = getMegaEvolutions();
+                    if (megas != null) {
+                        for (MegaEvolution me : megas) {
+                            if (me != null && me.from != null && me.from.number == p.number) {
+                                matches = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (matches) {
+                categoryPool.add(p);
+            }
+        }
+
+        for (int i = 0; i < starterCount; i++) {
+            if (categoryPool.isEmpty() || (categoryPool.size() < starterCount && pickedStarters.containsAll(categoryPool))) {
+                // Not enough Pokemon in this category, fallback to random
+                Pokemon pkmn = allowAltFormes ? randomPokemonInclFormes() : randomPokemon();
+                while (pickedStarters.contains(pkmn) || banned.contains(pkmn) || pkmn.actuallyCosmetic) {
+                    pkmn = allowAltFormes ? randomPokemonInclFormes() : randomPokemon();
+                }
+                pickedStarters.add(pkmn);
+            } else {
+                Pokemon pkmn = categoryPool.get(this.random.nextInt(categoryPool.size()));
+                while (pickedStarters.contains(pkmn)) {
+                    pkmn = categoryPool.get(this.random.nextInt(categoryPool.size()));
+                }
+                pickedStarters.add(pkmn);
+            }
+        }
+        setStarters(pickedStarters);
+    }
+
+    @Override
     public List<Pokemon> getPickedStarters() {
         return pickedStarters;
     }

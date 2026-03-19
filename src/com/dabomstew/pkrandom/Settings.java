@@ -100,8 +100,14 @@ public class Settings {
     private boolean ensureTwoAbilities;
 
     public enum StartersMod {
-        UNCHANGED, CUSTOM, COMPLETELY_RANDOM, RANDOM_WITH_TWO_EVOLUTIONS
+        UNCHANGED, CUSTOM, COMPLETELY_RANDOM, RANDOM_WITH_TWO_EVOLUTIONS, RANDOM_CATEGORY
     }
+
+    public enum StartersCategory {
+        LEGENDARY, MYTHICAL, ULTRA_BEAST, MEGA_EVOLVERS
+    }
+
+    private StartersCategory startersCategory = StartersCategory.LEGENDARY;
 
     private StartersMod startersMod = StartersMod.UNCHANGED;
     private boolean allowStarterAltFormes;
@@ -386,7 +392,8 @@ public class Settings {
         // 4: starter pokemon stuff
         out.write(makeByteSelected(startersMod == StartersMod.CUSTOM, startersMod == StartersMod.COMPLETELY_RANDOM,
                 startersMod == StartersMod.UNCHANGED, startersMod == StartersMod.RANDOM_WITH_TWO_EVOLUTIONS,
-                randomizeStartersHeldItems, banBadRandomStarterHeldItems, allowStarterAltFormes));
+                randomizeStartersHeldItems, banBadRandomStarterHeldItems, allowStarterAltFormes,
+                startersMod == StartersMod.RANDOM_CATEGORY));
 
         // 5 - 10: dropdowns
         write2ByteInt(out, customStarters[0] - 1);
@@ -577,7 +584,11 @@ public class Settings {
         // 49 pickup item randomization
         out.write(makeByteSelected(pickupItemsMod == PickupItemsMod.RANDOM,
                 pickupItemsMod == PickupItemsMod.UNCHANGED, banBadRandomPickupItems,
-                banIrregularAltFormes));
+                banIrregularAltFormes,
+                startersCategory == StartersCategory.LEGENDARY,
+                startersCategory == StartersCategory.MYTHICAL,
+                startersCategory == StartersCategory.ULTRA_BEAST,
+                startersCategory == StartersCategory.MEGA_EVOLVERS));
 
         // 50 elite four unique pokemon (3 bits) + catch rate level (3 bits)
         out.write(eliteFourUniquePokemonNumber | ((minimumCatchRateLevel - 1) << 3));
@@ -648,11 +659,15 @@ public class Settings {
         settings.setBanBadAbilities(restoreState(data[3], 6));
         settings.setAbilitiesFollowMegaEvolutions(restoreState(data[3],7));
 
-        settings.setStartersMod(restoreEnum(StartersMod.class, data[4], 2, // UNCHANGED
-                0, // CUSTOM
-                1, // COMPLETELY_RANDOM
-                3 // RANDOM_WITH_TWO_EVOLUTIONS
-        ));
+        if (restoreState(data[4], 7)) {
+            settings.setStartersMod(StartersMod.RANDOM_CATEGORY);
+        } else {
+            settings.setStartersMod(restoreEnum(StartersMod.class, data[4], 2, // UNCHANGED
+                    0, // CUSTOM
+                    1, // COMPLETELY_RANDOM
+                    3 // RANDOM_WITH_TWO_EVOLUTIONS
+            ));
+        }
         settings.setRandomizeStartersHeldItems(restoreState(data[4], 4));
         settings.setBanBadRandomStarterHeldItems(restoreState(data[4], 5));
         settings.setAllowStarterAltFormes(restoreState(data[4],6));
@@ -867,6 +882,7 @@ public class Settings {
                 0));       // RANDOMIZE
         settings.setBanBadRandomPickupItems(restoreState(data[49], 2));
         settings.setBanIrregularAltFormes(restoreState(data[49], 3));
+        settings.setStartersCategory(restoreEnum(StartersCategory.class, data[49], 4, 5, 6, 7));
 
         settings.setEliteFourUniquePokemonNumber(data[50] & 0x7);
         settings.setMinimumCatchRateLevel(((data[50] & 0x38) >> 3) + 1);
@@ -1319,6 +1335,14 @@ public class Settings {
 
     private void setStartersMod(StartersMod startersMod) {
         this.startersMod = startersMod;
+    }
+
+    public StartersCategory getStartersCategory() {
+        return startersCategory;
+    }
+
+    public void setStartersCategory(StartersCategory startersCategory) {
+        this.startersCategory = startersCategory;
     }
 
     public int[] getCustomStarters() {
